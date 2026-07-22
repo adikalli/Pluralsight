@@ -1,0 +1,58 @@
+version: 1.1
+
+source: taxicatalog.bronze.taxirides
+
+filter: source.VendorId = 1
+
+dimensions:
+  - name: RideId
+    expr: source.RideId
+    comment: This is the primary key column
+    display_name: Ride Id
+
+  - name: VendorId
+    expr: source.VendorId
+    display_name: Vendor Id
+
+  - name: PickupTime
+    expr: source.PickupTime
+    display_name: Pickup Time
+
+  - name: DropTime
+    expr: source.DropTime
+    display_name: Drop Time
+
+  - name: PickupLocationId
+    expr: source.PickupLocationId
+    display_name: Pickup Location Id
+
+  - name: DropLocationId
+    expr: source.DropLocationId
+    display_name: Drop Location Id
+
+  - name: CabNumber
+    expr: source.CabNumber
+    display_name: Cab Number
+
+  - name: TripDistance
+    expr: source.TripDistance
+    display_name: Trip Distance
+
+  - name: TotalAmount
+    expr: source.TotalAmount
+    display_name: Total Amount
+
+  - name: Trip Time in Minutes
+    expr: "DATE_DIFF(MINUTE, source.PickupTime, source.DropTime)"
+    display_name: Trip Time in Minutes
+
+measures:
+  - name: count
+    expr: COUNT(*)
+    comment: Represents the total number of rows in the dataset. Use this measure
+      to count all
+    display_name: Count
+
+  - name: Average Trip Time
+    expr: AVG(`Trip Time in Minutes`)
+    display_name: Average Trip Time

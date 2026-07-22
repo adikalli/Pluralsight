@@ -1,0 +1,11 @@
+CustomerId,CustomerName,Passport,CreditCard,City,SalesPerson
+1,Alice Smith,P1234567,4111-1111-1111-1111,New York,mohit@crystaltalks.co.in
+2,Bob Johnson,P2345678,4222-2222-2222-2222,Los Angeles,user1@sample.com
+3,Charlie Lee,P3456789,4333-3333-3333-3333,Chicago,user2@sample.com
+4,Diana King,P4567890,4444-4444-4444-4444,Houston,mohit@crystaltalks.co.in
+5,Evan Wright,P5678901,4555-5555-5555-5555,Phoenix,user1@sample.com
+6,Fiona Clark,P6789012,4666-6666-6666-6666,Philadelphia,user2@sample.com
+7,George Hall,P7890123,4777-7777-7777-7777,San Antonio,mohit@crystaltalks.co.in
+8,Hannah Scott,P8901234,4888-8888-8888-8888,San Diego,user1@sample.com
+9,Ian Turner,P9012345,4999-9999-9999-9999,Dallas,user2@sample.com
+10,Julia Adams,P0123456,4000-0000-0000-0000,San Jose,user2@sample.com

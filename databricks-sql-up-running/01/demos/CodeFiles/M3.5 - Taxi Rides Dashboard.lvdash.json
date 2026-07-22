@@ -1,0 +1,290 @@
+{
+  "datasets": [
+    {
+      "name": "b424145a",
+      "displayName": "Taxi Rides with Pickup Details",
+      "queryLines": [
+        "SELECT tr.RideId,\r\n",
+        "           tr.VendorId,\r\n",
+        "           tr.PickupTime,\r\n",
+        "           tr.DropTime,                     \r\n",
+        "           tr.TripDistance,           \r\n",
+        "           tr.TotalAmount,\r\n",
+        "           DATEDIFF(MINUTE, tr.PickupTime, tr.DropTime)  AS TripTimeInMinutes,\r\n",
+        "            \r\n",
+        "           tz.Borough         AS PickupBorough,\r\n",
+        "           tz.Zone            AS PickupZone,\r\n",
+        "           tz.service_zone    AS PickupServiceZone\r\n",
+        "\r\n",
+        "    FROM taxicatalog.bronze.TaxiRides tr\r\n",
+        "        \r\n",
+        "        JOIN taxicatalog.bronze.TaxiZones tz     ON tr.PickupLocationId = tz.LocationID\r\n",
+        "\r\n"
+      ]
+    },
+    {
+      "name": "c4f42ba2",
+      "displayName": "cabs",
+      "catalog": "taxicatalog",
+      "config": {
+        "version": "1.1",
+        "source": "taxicatalog.bronze.cabs",
+        "dimensions": [
+          {
+            "name": "CabNumber",
+            "expr": "source.CabNumber",
+            "displayName": "Cab Number"
+          },
+          {
+            "name": "VehicleLicenseNumber",
+            "expr": "source.VehicleLicenseNumber",
+            "displayName": "Vehicle License Number"
+          },
+          {
+            "name": "Name",
+            "expr": "source.Name",
+            "displayName": "Name"
+          },
+          {
+            "name": "LicenseType",
+            "expr": "source.LicenseType",
+            "displayName": "License Type"
+          },
+          {
+            "name": "Active",
+            "expr": "source.Active",
+            "displayName": "Active"
+          },
+          {
+            "name": "PermitLicenseNumber",
+            "expr": "source.PermitLicenseNumber",
+            "displayName": "Permit License Number"
+          },
+          {
+            "name": "VehicleVinNumber",
+            "expr": "source.VehicleVinNumber",
+            "displayName": "Vehicle Vin Number"
+          },
+          {
+            "name": "VehicleYear",
+            "expr": "source.VehicleYear",
+            "displayName": "Vehicle Year"
+          },
+          {
+            "name": "VehicleType",
+            "expr": "source.VehicleType",
+            "displayName": "Vehicle Type"
+          },
+          {
+            "name": "TelephoneNumber",
+            "expr": "source.TelephoneNumber",
+            "displayName": "Telephone Number"
+          },
+          {
+            "name": "Website",
+            "expr": "source.Website",
+            "displayName": "Website"
+          },
+          {
+            "name": "Address",
+            "expr": "source.Address",
+            "displayName": "Address"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "e2c98f48",
+      "displayName": "Feedback Sentiments",
+      "queryLines": [
+        "SELECT Feedback\r\n",
+        "\r\n",
+        "      , ai_analyze_sentiment(feedback) AS Sentiment\r\n",
+        "\r\n",
+        "FROM taxicatalog.bronze.RidesFeedback"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "aac6bfac",
+      "displayName": "Untitled page",
+      "layout": [
+        {
+          "widget": {
+            "name": "revenue-by-vendor",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "b424145a",
+                  "fields": [
+                    {
+                      "name": "VendorId",
+                      "expression": "`VendorId`"
+                    },
+                    {
+                      "name": "sum(TotalAmount)",
+                      "expression": "SUM(`TotalAmount`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Revenue by Vendor"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "VendorId",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(TotalAmount)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "7767b5fd",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e2c98f48",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    },
+                    {
+                      "name": "Sentiment",
+                      "expression": "`Sentiment`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Feedback Sentiment Distribution"
+              },
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "count(*)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Sentiment",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 0,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "active_cabs_counter",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c4f42ba2",
+                  "fields": [
+                    {
+                      "name": "measure(count)",
+                      "expression": "MEASURE(`count`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`Active` IN ('YES')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Active Cabs"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(count)",
+                  "displayName": "Active Cabs"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 5,
+            "width": 4,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
